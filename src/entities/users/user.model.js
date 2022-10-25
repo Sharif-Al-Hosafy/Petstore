@@ -8,6 +8,7 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Please provide a username"],
     maxlength: 20,
     minlength: 4,
+    unique: true,
   },
   firstName: {
     type: String,
@@ -39,6 +40,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide your phone number"],
     minlength: 11,
+    unique: true,
   },
 });
 
