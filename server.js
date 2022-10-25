@@ -9,6 +9,7 @@ const app = express();
 const dbConnection = require("./config/dbConnection");
 
 //require routes
+const usersRoutes = require("./src/entities/users/user.router");
 
 // custom middlewares
 const notFound = require("./src/utils/errors/not.found");
@@ -23,6 +24,7 @@ app.use(cors());
 app.get("/", (req, res) => {
   res.send("Hi from Petstore");
 });
+app.use("/api/v1/users", usersRoutes);
 
 //Error Handling
 app.use(notFound);
