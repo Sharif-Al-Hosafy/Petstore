@@ -34,9 +34,13 @@ const getUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const newUser = await User.create({ ...req.body });
-  const token = newUser.CreateJWT();
-  res.status(201).json({ user: { username: newUser.username }, token });
+  const updatedUser = await User.findOneAndUpdate(
+    req.params.username,
+    { ...req.body },
+    { new: true, runValidators: true }
+  );
+  if (!updatedUser) throw createError(404, "user is not found");
+  res.status(201).json({ updatedUser });
 };
 
 const deleteUser = async (req, res) => {
