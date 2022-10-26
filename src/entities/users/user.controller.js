@@ -37,7 +37,7 @@ const updateUser = async (req, res) => {
   const updatedUser = await User.findOneAndUpdate(
     req.params.username,
     { ...req.body },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true } // new option to true to return the document after update was applied
   );
   if (!updatedUser) throw createError(404, "user is not found");
   res.status(201).json({ updatedUser });
