@@ -1,5 +1,6 @@
 require("dotenv").config();
 require("express-async-errors");
+const path = require("path");
 
 //create express app
 const express = require("express");
@@ -10,12 +11,14 @@ const dbConnection = require("./config/dbConnection");
 
 //require routes
 const usersRoutes = require("./src/entities/users/user.router");
+const petsRoutes = require("./src/entities/pets/pet.router");
 
 // custom middlewares
 const notFound = require("./src/utils/errors/not.found");
 const errorHandler = require("./src/utils/errors/custom.error.handler");
 
 // express middlewares
+// app.use("/static", express.static(path.join(__dirname, "uploads")));
 const cors = require("cors");
 app.use(express.json());
 app.use(cors());
@@ -24,7 +27,8 @@ app.use(cors());
 app.get("/", (req, res) => {
   res.send("Hi from Petstore");
 });
-app.use("/api/v1/users", usersRoutes);
+app.use("/api/v1/user", usersRoutes);
+app.use("/api/v1/pet", petsRoutes);
 
 //Error Handling
 app.use(notFound);

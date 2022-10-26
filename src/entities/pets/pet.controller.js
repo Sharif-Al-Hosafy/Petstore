@@ -1,8 +1,11 @@
 const createError = require("../../utils/errors/error.module");
 const Pet = require("./pet.model");
+const formidable = require("formidable");
+const fs = require("fs");
+const path = require("path");
 
 const getOnePet = async (req, res) => {
-  const pet = Pet.findOne({ _id: req.params.id });
+  const pet = await Pet.findById(req.params.id);
   if (!pet) throw createError(404, "No Pets Found");
   res.status(200).json({ pet });
 };
@@ -14,12 +17,27 @@ const addPet = async (req, res) => {
 };
 
 const uploadPetImage = async (req, res) => {
-  const imageUrl = req.body.photoUrls;
-  const pet = Pet.findOne({ _id: req.params.id });
-  if (!pet) throw createError(404, "No pets Found");
-  const photosArr = pet.photoUrls;
-  photosArr.push(imageUrl);
-  res.status(201).json({ petPhotos: photosArr });
+  var form = new formidable.IncomingForm();
+
+  form.parse(req);
+
+  form.on("fileBegin", function (name, file) {
+    console.log(file);
+    file.filepath = "./uploads/" + file.originalFilename;
+  });
+
+  form.on("file", function (name, file) {
+    console.log("Uploaded " + file.originalFilename);
+    console.log(file.filepath);
+  });
+
+  //   const imageUrl = req.files;
+  //   console.log(imageUrl);
+  //   const pet = await Pet.findById(req.params.id);
+  //   if (!pet) throw createError(404, "No pets Found");
+  //   pet.photoUrls.push(imageUrl);
+  //   //save
+  res.status(201).json({});
 };
 
 const searchPet = async (req, res) => {
