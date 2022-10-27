@@ -7,6 +7,8 @@ const {
   getOnePet,
   uploadPetImage,
   searchByTag,
+  submitBid,
+  getAllBids,
 } = require("./pet.controller");
 const authMiddleware = require("../../utils/authentication middleware/auth"); // token authentication
 
@@ -22,5 +24,11 @@ router.route("/:id/uploadImage").post(authMiddleware, uploadPetImage); // upload
 
 router.route("/search/tag").get(searchByTag);
 router.route("/search/status").get(searchByStatus); // post for adding pet && get for search by status and or tag
+
+// bidding
+router
+  .route("/bid/:petId")
+  .post(authMiddleware, submitBid)
+  .get(authMiddleware, getAllBids);
 
 module.exports = router;

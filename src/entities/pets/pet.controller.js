@@ -13,11 +13,12 @@ const addPet = async (req, res) => {
   if (req.user.userType !== "owner")
     throw createError(400, "You Have to be an Owner to add pets");
 
-  const { name, category, status, tags } = req.body;
+  const { name, category, status, tags, quantity } = req.body;
   const newPet = await Pet.create({
     name,
     category,
     status,
+    quantity,
     tags,
     ownerId: req.user.id, // the user who created this pet
   });
@@ -115,6 +116,27 @@ const deletePet = async (req, res) => {
   res.status(200).json({ petToDelete });
 };
 
+const submitBid = async (req, res) => {
+  const pet = await Pet.findById(req.params.petId);
+  if (!pet) throw createError(404, "No pets Found");
+
+  const { amount } = req.body;
+
+  pet.bids.push({ bidder: req.user.username, amount });
+
+  await pet.save();
+
+  res.status(200).json(pet);
+};
+
+const getAllBids = async (req, res) => {
+  const pet = await Pet.findById(req.params.petId);
+  if (!pet) throw createError(404, "No pets Found");
+  const bids = pet.bids;
+  console.log(bids);
+  res.status(200).json(bids);
+};
+
 module.exports = {
   addPet,
   searchByStatus,
@@ -123,4 +145,6 @@ module.exports = {
   getOnePet,
   uploadPetImage,
   searchByTag,
+  submitBid,
+  getAllBids,
 };

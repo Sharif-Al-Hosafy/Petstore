@@ -14,6 +14,7 @@ const PetSchema = new mongoose.Schema({
     enum: ["available", "pending", "sold"],
     default: "available",
   },
+  quantity: Number, // to use in auctions
   tags: [
     {
       type: String,
@@ -22,10 +23,7 @@ const PetSchema = new mongoose.Schema({
   ],
   photoUrls: [String],
   ownerId: { type: mongoose.Schema.Types.ObjectId }, // to make authorization on each pet "no one can delete or modify other pets"
-  bid: {
-    bidder: { type: mongoose.Schema.Types.ObjectId },
-    amount: Number,
-  },
+  bids: [{ bidder: String, amount: Number }],
 });
 
 module.exports = mongoose.model("Pet", PetSchema);
