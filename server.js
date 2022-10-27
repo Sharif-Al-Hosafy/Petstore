@@ -19,7 +19,7 @@ const notFound = require("./src/utils/errors/not.found");
 const errorHandler = require("./src/utils/errors/custom.error.handler");
 
 // express middlewares
-// app.use("/static", express.static(path.join(__dirname, "uploads")));
+app.use(express.static(__dirname + "/uploads"));
 const cors = require("cors");
 app.use(express.json());
 app.use(cors());

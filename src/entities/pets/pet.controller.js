@@ -45,16 +45,17 @@ const uploadPetImage = async (req, res) => {
 
   form.parse(req);
 
-  form.on("fileBegin", function (name, file) {
-    console.log(file);
+  form.on("fileBegin", async function (name, file) {
     file.filepath = "./uploads/" + file.originalFilename;
+    pet.photoUrls.push(`http://localhost:5000/${file.originalFilename}`);
+    await pet.save();
   });
 
   form.on("file", function (name, file) {
     console.log("Uploaded " + file.originalFilename);
   });
 
-  res.status(201).json({});
+  res.status(201).json({ message: "Uploaded successfully" });
 };
 
 const searchByStatus = async (req, res) => {
