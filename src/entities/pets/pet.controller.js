@@ -117,12 +117,12 @@ const deletePet = async (req, res) => {
   res.status(200).json({ petToDelete });
 };
 
+/////////////////////// Challenge 1 ///////////////////////////////
 const submitBid = async (req, res) => {
   const pet = await Pet.findById(req.params.petId);
   if (!pet) throw createError(404, "No pets Found");
 
   const { amount } = req.body;
-
   pet.bids.push({ bidder: req.user.username, amount });
 
   await pet.save();
@@ -133,10 +133,66 @@ const submitBid = async (req, res) => {
 const getAllBids = async (req, res) => {
   const pet = await Pet.findById(req.params.petId);
   if (!pet) throw createError(404, "No pets Found");
-  const bids = pet.bids;
-  console.log(bids);
+  let bids = pet.bids;
+  bids = bids.sort((a, b) => b.amount - a.amount); // getting prices from high to low
   res.status(200).json(bids);
 };
+//////////////////////////////////////////////////////////////////////
+
+/////////////////////////// challenge 2 /////////////////////////////
+const auction = async (req, res) => {
+  const pet = await Pet.findById(req.params.id);
+  if (!pet) throw createError(404, "No pets Found");
+  let bids = pet.bids.sort((a, b) => b.amount - a.amount); // getting prices from high to low
+
+  let auctionResults = [];
+  if (bids.length > pet.quantity) {
+    // bidders more than the quantity in stock so the last bidder is the loser
+    for (let i = 0; i < pet.quantity; i++) {
+      let auc = {};
+      auc.name = bids[i].bidder;
+      auc.amount = bids[i + 1].amount;
+      auctionResults.push(auc);
+    }
+
+    let loser = {
+      name: bids[bids.length - 1].bidder,
+      amount: "Lost in the auction",
+    };
+    auctionResults.push(loser);
+  } else if (bids.length == pet.quantity) {
+    // bidders are qual to the quantity
+    for (let i = 0; i < pet.quantity - 1; i++) {
+      let auc = {};
+      auc.name = bids[i].bidder;
+      auc.amount = bids[i + 1].amount;
+      auctionResults.push(auc);
+    }
+
+    let loser = {
+      name: bids[bids.length - 1].bidder,
+      amount: "Lost in the auction",
+    };
+    auctionResults.push(loser);
+  } else if (bids.length < pet.quantity)
+    throw createError(404, "No Bids No Winners");
+
+  // if two bids are equal take the first one --> note: no 2 user names will be equal accourding to the db model
+  if (auctionResults[0].amount == auctionResults[1].amount) {
+    let winner =
+      auctionResults[0].name < auctionResults[1].name
+        ? auctionResults[0].name
+        : auctionResults[1].name;
+
+    return res
+      .status(200)
+      .json({ message: `The winner is ${winner} According to the equality ` });
+  }
+
+  res.status(200).json(auctionResults);
+};
+
+/////////////////////////////////////////////////////////////////////
 
 module.exports = {
   addPet,
@@ -148,4 +204,5 @@ module.exports = {
   searchByTag,
   submitBid,
   getAllBids,
+  auction,
 };

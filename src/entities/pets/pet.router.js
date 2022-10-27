@@ -9,6 +9,7 @@ const {
   searchByTag,
   submitBid,
   getAllBids,
+  auction,
 } = require("./pet.controller");
 const authMiddleware = require("../../utils/authentication middleware/auth"); // token authentication
 
@@ -30,5 +31,8 @@ router
   .route("/bid/:petId")
   .post(authMiddleware, submitBid)
   .get(authMiddleware, getAllBids);
+
+// Generalized second-price auction
+router.route("/auction/:id").get(authMiddleware, auction);
 
 module.exports = router;
