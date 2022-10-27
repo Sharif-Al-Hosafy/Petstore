@@ -21,6 +21,7 @@ const UserSchema = new mongoose.Schema({
     },
   ],
   photoUrls: [String],
+  ownerId: { type: mongoose.Schema.Types.ObjectId }, // to make authorization on each pet "no one can delete or modify other pets"
 });
 
 module.exports = mongoose.model("Pet", UserSchema);

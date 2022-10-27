@@ -14,9 +14,9 @@ module.exports = async (req, res, next) => {
     req.user = {
       id: decode.userId,
       username: decode.username,
+      userType: decode.userType,
     };
 
-    console.log(req.user);
     next();
   } catch (error) {
     throw err(401, "No Token Provided");

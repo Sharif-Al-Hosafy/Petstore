@@ -1,8 +1,7 @@
 const createError = require("../../utils/errors/error.module");
 const Pet = require("./pet.model");
 const formidable = require("formidable");
-const fs = require("fs");
-const path = require("path");
+const User = require("../users/user.model");
 
 const getOnePet = async (req, res) => {
   const pet = await Pet.findById(req.params.id);
@@ -10,13 +9,37 @@ const getOnePet = async (req, res) => {
   res.status(200).json({ pet });
 };
 
-/// don't forget to add owner Id after impliminting the auth middleware
 const addPet = async (req, res) => {
-  const newPet = await Pet.create({ ...req.body });
+  if (req.user.userType !== "owner")
+    throw createError(400, "You Have to be an Owner to add pets");
+
+  const { name, category, status, tags } = req.body;
+  const newPet = await Pet.create({
+    name,
+    category,
+    status,
+    tags,
+    ownerId: req.user.id, // the user who created this pet
+  });
+
+  //// adding pet to the user inventory //////////
+
+  const user = await User.findById(req.user.id);
+  user.pets.push(newPet); // ---> to the pets array
+  await user.save();
+
+  ////////////////////////////////////////////////
+
   res.status(201).json({ newPet });
 };
 
 const uploadPetImage = async (req, res) => {
+  const pet = await Pet.findById(req.params.id);
+  if (!pet) throw createError(404, "No pets Found");
+
+  if (pet.ownerId != req.user.id)
+    throw createError(401, "You're not the pet owner");
+
   var form = new formidable.IncomingForm();
 
   form.parse(req);
@@ -60,21 +83,36 @@ const searchByTag = async (req, res) => {
 };
 
 const updatePet = async (req, res) => {
-  const pet = await Pet.findOneAndUpdate({ _id: req.params.id }, req.body, {
-    new: true, // new option to true to return the document after update was applied
-    runValidators: true,
-  });
+  const pet = await Pet.findById(req.params.id);
+  if (!pet) throw createError(404, "No pets Found");
+
+  if (pet.ownerId != req.user.id)
+    throw createError(401, "You're not the pet owner");
+
+  const petToUpdate = await Pet.findOneAndUpdate(
+    { _id: req.params.id },
+    req.body,
+    {
+      new: true, // new option to true to return the document after update was applied
+      runValidators: true,
+    }
+  );
 
   if (!pet) throw createError(404, "No pets Found");
 
-  res.status(200).json({ pet });
+  res.status(200).json({ petToUpdate });
 };
 
 const deletePet = async (req, res) => {
-  const pet = await Pet.findByIdAndDelete(req.params.id);
+  const pet = await Pet.findById(req.params.id);
   if (!pet) throw createError(404, "No pets Found");
 
-  res.status(200).json({ pet });
+  if (pet.ownerId != req.user.id)
+    throw createError(401, "You're not the pet owner");
+
+  const petToDelete = await Pet.findByIdAndDelete({ _id: req.params.id });
+
+  res.status(200).json({ petToDelete });
 };
 
 module.exports = {
