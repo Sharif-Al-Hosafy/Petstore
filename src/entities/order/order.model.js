@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const OrderSchema = new mongoose.Schema({
+  buyerId: { type: mongoose.Schema.Types.ObjectId }, // for authorization
   petId: { type: mongoose.Schema.Types.ObjectId },
   quantity: Number,
   shipDate: { type: Date, default: Date.now },
