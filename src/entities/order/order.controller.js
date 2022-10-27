@@ -1,5 +1,7 @@
 const createError = require("../../utils/errors/error.module");
 const Order = require("./order.model");
+const User = require("../users/user.model");
+const Pet = require("../pets/pet.model");
 
 const placeOrder = async (req, res) => {
   const { quantity, status, complete } = req.body;
@@ -15,6 +17,7 @@ const placeOrder = async (req, res) => {
 
 const getOrderById = async (req, res) => {
   const order = await Order.findById(req.params.id);
+
   if (order.buyerId != req.user.id)
     throw createError(401, "Unauthorized attempt");
   if (!order) throw createError(404, "No Orders Found");
@@ -34,7 +37,17 @@ const deleteOrder = async (req, res) => {
 };
 
 const inventory = async (req, res) => {
-  res.status(200).json(user);
+  const users = await User.find(); // get all users
+
+  const pets = Promise.all(
+    users.map(async (user) => {
+      const thisUser = await User.findById(user.id).populate("pets");
+      return thisUser.pets;
+    })
+  );
+  const inventory = await pets;
+
+  res.status(200).json(inventory.flat()); // getting all user's pets
 };
 
 module.exports = {
