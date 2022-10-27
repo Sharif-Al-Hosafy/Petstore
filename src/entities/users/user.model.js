@@ -50,15 +50,6 @@ const UserSchema = new mongoose.Schema({
   pets: [{ type: mongoose.Schema.Types.ObjectId, ref: "Pet" }], // if the user is owner
 });
 
-UserSchema.pre("save", async function () {
-  this.password = await bcrypt.hash(this.password, 10);
-});
-
-UserSchema.methods.comparePass = async function (userPass) {
-  const isMatch = await bcrypt.compare(userPass, this.password);
-  return isMatch;
-};
-
 UserSchema.methods.CreateJWT = function () {
   return jwt.sign(
     { userId: this._id, username: this.username, userType: this.userType },

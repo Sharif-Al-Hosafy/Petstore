@@ -1,8 +1,22 @@
 const createError = require("../../utils/errors/error.module");
 const User = require("./user.model");
+const bcrypt = require("bcrypt");
 
 const signUp = async (req, res) => {
-  const newUser = await User.create({ ...req.body });
+  const { username, firstName, lastName, email, phone, userType } = req.body;
+  let password = req.body.password;
+
+  const hash = await bcrypt.hash(password, 10); // hash password
+
+  const newUser = await User.create({
+    username,
+    firstName,
+    lastName,
+    email,
+    password: hash,
+    phone,
+    userType,
+  });
   const token = newUser.CreateJWT();
   res.status(201).json({ user: { username: newUser.username }, token });
 };
@@ -16,9 +30,9 @@ const logIn = async (req, res) => {
   const user = await User.findOne({ username });
   if (!user) throw createError(401, "user is not found");
 
-  const isPasswordMatch = await user.comparePass(password);
-  if (!isPasswordMatch)
-    throw createError(401, "Username or Password is incorrect");
+  const isMatch = await bcrypt.compare(password, user.password); // compare password
+
+  if (!isMatch) throw createError(401, "Username or Password is incorrect");
 
   const token = user.CreateJWT();
 
