@@ -48,6 +48,9 @@ const getUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
+  if (req.user.username !== req.params.username)
+    throw createError(401, "Unauthorized attempt");
+
   const updatedUser = await User.findOneAndUpdate(
     req.params.username,
     { ...req.body },
@@ -59,6 +62,9 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   const username = req.params.username;
+  if (req.user.username !== username)
+    throw createError(401, "Unauthorized attempt");
+
   const deleted = await User.findOneAndDelete({ username });
   if (!deleted) throw createError(404, "user is not found"); // if username is not exist
 

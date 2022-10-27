@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const UserSchema = new mongoose.Schema({
+const PetSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "Please provide a pet name"],
@@ -24,4 +24,4 @@ const UserSchema = new mongoose.Schema({
   ownerId: { type: mongoose.Schema.Types.ObjectId }, // to make authorization on each pet "no one can delete or modify other pets"
 });
 
-module.exports = mongoose.model("Pet", UserSchema);
+module.exports = mongoose.model("Pet", PetSchema);

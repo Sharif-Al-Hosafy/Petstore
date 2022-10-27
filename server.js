@@ -12,6 +12,7 @@ const dbConnection = require("./config/dbConnection");
 //require routes
 const usersRoutes = require("./src/entities/users/user.router");
 const petsRoutes = require("./src/entities/pets/pet.router");
+const orderRoutes = require("./src/entities/order/order.router");
 
 // custom middlewares
 const notFound = require("./src/utils/errors/not.found");
@@ -29,6 +30,7 @@ app.get("/", (req, res) => {
 });
 app.use("/api/v1/user", usersRoutes);
 app.use("/api/v1/pet", petsRoutes);
+app.use("/api/v1/store", orderRoutes);
 
 //Error Handling
 app.use(notFound);
