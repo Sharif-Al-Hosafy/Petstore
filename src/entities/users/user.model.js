@@ -42,6 +42,12 @@ const UserSchema = new mongoose.Schema({
     minlength: 11,
     unique: true,
   },
+  userType: {
+    type: String,
+    enum: ["owner", "customer"],
+    default: "customer",
+  },
+  pets: [{ type: mongoose.Schema.Types.ObjectId, ref: "Pet" }], // if the user is owner
 });
 
 UserSchema.pre("save", async function () {

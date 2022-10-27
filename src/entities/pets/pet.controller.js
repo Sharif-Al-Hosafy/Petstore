@@ -28,31 +28,35 @@ const uploadPetImage = async (req, res) => {
 
   form.on("file", function (name, file) {
     console.log("Uploaded " + file.originalFilename);
-    console.log(file.filepath);
   });
 
-  //   const imageUrl = req.files;
-  //   console.log(imageUrl);
-  //   const pet = await Pet.findById(req.params.id);
-  //   if (!pet) throw createError(404, "No pets Found");
-  //   pet.photoUrls.push(imageUrl);
-  //   //save
   res.status(201).json({});
 };
 
-const searchPet = async (req, res) => {
-  const { tag, status } = req.query; // search by status and or tag
+const searchByStatus = async (req, res) => {
+  const { status } = req.query; // search by query params
 
   // we made this empty obj in order not to mess with the query if a garbage params were sent
   const queryObj = {};
 
   if (status) queryObj.status = status;
-  if (tag) queryObj.tag = tag;
 
   const pet = await Pet.find(queryObj);
+
   if (!pet) throw createError(404, "No pets Found");
 
-  res.status(200).json({ pets: pet });
+  res.status(200).json({ pets: pet, nbhits: pet.length });
+};
+
+const searchByTag = async (req, res) => {
+  let { tags } = req.query; // search by query params
+
+  tags = tags.split(","); // to make array of different tags to make search more accurate
+
+  const pet = await Pet.find({ tags: { $all: tags } });
+  if (pet.length === 0) throw createError(404, "No pets Found");
+
+  res.status(200).json({ pets: pet, nbhits: pet.length });
 };
 
 const updatePet = async (req, res) => {
@@ -75,9 +79,10 @@ const deletePet = async (req, res) => {
 
 module.exports = {
   addPet,
-  searchPet,
+  searchByStatus,
   updatePet,
   deletePet,
   getOnePet,
   uploadPetImage,
+  searchByTag,
 };
