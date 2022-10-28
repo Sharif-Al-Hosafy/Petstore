@@ -4,6 +4,8 @@ const User = require("../users/user.model");
 const Pet = require("../pets/pet.model");
 
 const placeOrder = async (req, res) => {
+  const pet = await Pet.findById(req.params.id);
+  if (!pet) throw createError(404, "No Pets Found");
   const { quantity, status, complete } = req.body;
   const order = await Order.create({
     buyerId: req.user.id,
@@ -18,15 +20,17 @@ const placeOrder = async (req, res) => {
 const getOrderById = async (req, res) => {
   const order = await Order.findById(req.params.id);
 
+  if (!order) throw createError(404, "No Orders Found");
   if (order.buyerId != req.user.id)
     throw createError(401, "Unauthorized attempt");
-  if (!order) throw createError(404, "No Orders Found");
 
   res.status(200).json(order);
 };
 
 const deleteOrder = async (req, res) => {
   const order = await Order.findById(req.params.id);
+  if (!order) throw createError(404, "No Orders Found");
+
   if (order.buyerId != req.user.id)
     throw createError(401, "Unauthorized attempt");
 

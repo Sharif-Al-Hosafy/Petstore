@@ -14,7 +14,7 @@ const PetSchema = new mongoose.Schema({
     enum: ["available", "pending", "sold"],
     default: "available",
   },
-  quantity: Number, // to use in auctions
+  quantity: { type: Number, required: [true, "Please provide a pet stock"] }, // to use in auctions
   tags: [
     {
       type: String,

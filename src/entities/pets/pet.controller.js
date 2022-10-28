@@ -76,6 +76,8 @@ const searchByStatus = async (req, res) => {
 const searchByTag = async (req, res) => {
   let { tags } = req.query; // search by query params
 
+  if (!tags) throw createError(404, "No Tags added in query params");
+
   tags = tags.split(","); // to make array of different tags to make search more accurate
 
   const pet = await Pet.find({ tags: { $all: tags } });

@@ -4,6 +4,8 @@ const bcrypt = require("bcrypt");
 
 const signUp = async (req, res) => {
   const { username, firstName, lastName, email, phone, userType } = req.body;
+  if (username.includes(" "))
+    throw createError(400, "No Spaces Allowed in username");
   let password = req.body.password;
 
   const hash = await bcrypt.hash(password, 10); // hash password

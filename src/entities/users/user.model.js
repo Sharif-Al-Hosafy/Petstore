@@ -14,13 +14,13 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide your first name"],
     maxlength: 20,
-    minlength: 4,
+    minlength: 3,
   },
   lastName: {
     type: String,
     required: [true, "Please provide your last name"],
     maxlength: 20,
-    minlength: 4,
+    minlength: 3,
   },
   email: {
     type: String,
