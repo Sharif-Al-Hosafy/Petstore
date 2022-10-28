@@ -40,7 +40,7 @@ After cloning the repo you need to:
  
  ### Important Links
  
- 1- [Download Postman Api Collection](https://drive.google.com/file/d/1s6cegPaFVn_HB0R9GuXbcznTMF1MMlv_/view?usp=sharing).
+ 1- [Download Postman Api Collection Including Tests In Routes](https://drive.google.com/file/d/1s6cegPaFVn_HB0R9GuXbcznTMF1MMlv_/view?usp=sharing).
  
  2- [Swagger Api Documentation](https://app.swaggerhub.com/apis/sherifismail44/petstore/1.0.0#/).
  
