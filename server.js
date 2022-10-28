@@ -7,7 +7,7 @@ const express = require("express");
 const app = express();
 
 // require db
-const dbConnection = require("./config/dbConnection");
+const dbConnection = require("./src/config/dbConnection");
 
 //require routes
 const usersRoutes = require("./src/entities/users/user.router");
